@@ -213,6 +213,17 @@ def deleteTurmas(idTurma):
             return jsonify(dados)
 
 
+@app.route("/reseta", methods = ['POST', "DELETE"])
+def resetaAlunosProfessroes():
+    professores = []
+    dici["professor"] = professores
+    alunos = []
+    dici["alunos"] = alunos
+    for professor in professores:
+        dici["professor"].remove(professor)
+    for aluno in alunos:
+        dici["aluno"].remove(aluno)
+    return jsonify(alunos, professores)
 
 if __name__=="__main__":
     app.run(debug=True)
