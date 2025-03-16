@@ -1,59 +1,32 @@
-import requests
-import unittest
+from flask import jsonify
 
-'''
-Cada aluno será representado por um dicionário JSON como o seguinte: 
-{"id":1,"nome":"marcos"}
+# Classes de erro personalizadas
+class IdDuplicadoError(Exception):
+    """Erro para IDs duplicados"""
+    pass
 
-Testes 000 e 001:
-Na URL /alunos, se o verbo for GET, 
-retornaremos uma lista com um dicionário para cada aluno.
+class IdNegativoError(Exception):
+    """Erro para IDs negativos"""
+    pass
 
-Na URL /alunos, com o verbo POST, ocorrerá a criação do aluno,
-enviando um desses dicionários 
+# Função que registra os handlers no app
+def registrar_handlers(app):
+    @app.errorhandler(IdDuplicadoError)
+    def id_duplicado(error):
+        response = jsonify({"erro": str(error)})
+        response.status_code = 400
+        return response
 
-Teste 002
-Na URL /alunos/<int:id>, se o verbo for GET, devolveremos o nome e id do aluno. 
-(exemplo. /alunos/2 devolve o dicionário do aluno(a) de id 2)
+    @app.errorhandler(IdNegativoError)
+    def id_negativo(error):
+        response = jsonify({"erro": str(error)})
+        response.status_code = 400
+        return response
 
-Teste 003
-Na URL /reseta, apagaremos a lista de alunos e professores (essa URL só atende o verbo POST e DELETE).
-
-Teste 004
-Na URL /alunos/<int:id>, se o verbo for DELETE, deletaremos o aluno.
-(dica: procure lista.remove)
-
-Teste 005
-Na URL /alunos/<int:id>, se o verbo for PUT, 
-editaremos o aluno, mudando seu nome. 
-Para isso, o usuário vai enviar um dicionário 
-com a chave nome, que deveremos processar
-
-Se o usuário manda um dicionário {“nome”:”José”} para a url /alunos/40,
-com o verbo PUT, trocamos o nome do usuário 40 para José
-
-Tratamento de erros
-
-Testes 006 a 008b: Erros de usuário darão um código de status 400, e retornarão um dicionário descrevendo o erro. 
-No teste 006, tentamos fazer GET, PUT e DELETE na URL  /alunos/15, sendo que o aluno de id 15 não existe. Nesse caso, devemos retornar um código de status 400 e um dicionário {“erro”:'aluno nao encontrado'}
-No teste 007, tentamos criar dois alunos com a mesma id. Nesse caso, devemos retornar um código de status 400 e um dicionário {‘erro’:'id ja utilizada'}
-No teste 008a, tento enviar um aluno sem nome via post. Nesse caso, devemos retornar um código de status 400 e um dicionário {‘erro’:'aluno sem nome'}
-No teste 008b, tento editar um aluno, usando o verbo put, mas mando um dicionário sem nome. Nesse caso, devemos retornar um código de status 400 e um dicionário {“erro”:'aluno sem nome'}
-Testes 100 a 109: Teremos as URLs análogas para professores.
 
 
 '''
 
-class TestStringMethods(unittest.TestCase):
-    BASE_URL = 'http://127.0.0.1:5000'
-
-    def test_001_id_negativo(self):
-        dados = {
-              'id': -1
-              
-          }
-        r = requests.post(f'{self.BASE_URL}/alunos', json=dados)
-          
           # Verifica se o status code é 400 (Bad Request)
         self.assertEqual(r.status_code, 400)
           
@@ -146,7 +119,7 @@ class TestStringMethods(unittest.TestCase):
 
     #esse teste adiciona 2 alunos, depois deleta 1
     #e verifica que o numero de alunos realmente diminuiu
-    '''
+    
     voce provavelmente vai querer usar o lista.remove
     >>> lista
     [10, 20, 'banana']
@@ -155,7 +128,7 @@ class TestStringMethods(unittest.TestCase):
     [10, 20]
     >>> lista.remove(10)
     >>> lista
-    [20]'''
+    [20]
     def test_004_deleta(self):
         #apago tudo
         r_reset = requests.post('http://localhost:5002/reseta')
@@ -456,4 +429,10 @@ def runTests():
 
 
 if __name__ == '__main__':
-    runTests()
+    runTests()'
+    
+    
+    
+
+    
+    '''

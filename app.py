@@ -3,6 +3,10 @@
 #pip install flask
 
 from flask import Flask, jsonify, request # importando o Flask
+from Erros import IdDuplicadoError, IdNegativoError, registrar_handlers
+
+app = Flask(__name__)
+registrar_handlers(app)  
 
 dici = {
     "alunos":[
@@ -43,14 +47,7 @@ dici = {
             "nota_segundo_semestre": "8",
             "media_final": "9"
 
-        }
-
-
-        
-        
-        
-            
-        
+        }       
     ],
 
     "professor":[
@@ -73,29 +70,43 @@ dici = {
     ],
 }
 
-app = Flask(__name__) # criando um novo objeto a partir do molde - métodos e propriedads
+#ALUNOS -------------------------------------------------------------------------------------        
+#ALUNOS -------------------------------------------------------------------------------------        
+#ALUNOS -------------------------------------------------------------------------------------        
+# === Rota para pegar todos os alunos (GETTTT) ===
+@app.route('/alunos', methods=['GET'])
+def getAluno():
+    return jsonify(dici['alunos'])
 
-
-#ALUNOS ---------------
-@app.route("/alunos", methods = ['GET']) #Criando minha rota
-def getAluno(): # função do endpoint "/alunos" com verbo "GET"
-    dados=dici['alunos'] # da chave "alunos" me retorna uma lista
-    return jsonify(dados) # dicionario to json
-
+# === Rota para pegar um aluno por ID (GETTTTTTTT)  ===
 @app.route("/alunos/<int:idAluno>", methods=['GET'])
 def getAlunosId(idAluno):
     alunos = dici["alunos"]
     for aluno in alunos:
         if aluno["id"] == idAluno:
-            dados = aluno
-            return jsonify(dados)
+            return jsonify(aluno)
+    return jsonify({"erro": "Aluno não encontrado"}), 404
 
-@app.route('/alunos',methods=['POST'])
+# === Rota para criar aluno (POSTTTTTTTTT)===
+@app.route('/alunos', methods=['POST'])
 def createAluno():
     dados = request.json
-    dici['alunos'].append(dados)
-    return jsonify(dados)
+    alunos = dici['alunos']
 
+    # Verifica se o ID já existe
+    for aluno in alunos:
+        if aluno['id'] == dados['id']:
+            raise IdDuplicadoError("Já existe um aluno com esse ID")
+
+    # Verifica se o ID é válido
+    if dados.get('id') is None or dados['id'] < 1:
+        raise IdNegativoError("O ID do aluno deve ser maior ou igual a 1")
+
+    # Adiciona o aluno se passar nas verificações
+    dici['alunos'].append(dados)
+    return jsonify(dados), 201
+
+@app.route('/alunos', methods=['POST'])
 
 @app.route("/alunos/<int:idAluno>", methods=['PUT'])
 def updateAlunos(idAluno):
@@ -125,7 +136,7 @@ def deleteAlunos(idAluno):
             return jsonify(dados)
         
 
-
+#ALUNOS ---------------------------------------------------------------------------------------------
 #PROFESSORES ---------
 @app.route("/professores", methods=['GET'])
 def getProfessor():
@@ -224,6 +235,9 @@ def resetaAlunosProfessroes():
     for aluno in alunos:
         dici["aluno"].remove(aluno)
     return jsonify(alunos, professores)
+
+
+import Erros
 
 if __name__=="__main__":
     app.run(debug=True)
