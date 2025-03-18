@@ -6,8 +6,8 @@ class IdDuplicadoError(Exception):
     pass
 
 class IdNegativoError(Exception):
-    """Erro para IDs negativos"""
-    pass
+     """Erro para IDs negativos"""
+     pass
 
 # Função que registra os handlers no app
 def registrar_handlers(app):
@@ -16,12 +16,3 @@ def registrar_handlers(app):
         response = jsonify({"erro": str(error)})
         response.status_code = 400
         return response
-
-    @app.errorhandler(IdNegativoError)
-    def id_negativo(error):
-        response = jsonify({"erro": str(error)})
-        response.status_code = 400
-        return response
-
-
-
