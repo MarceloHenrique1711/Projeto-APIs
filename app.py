@@ -129,7 +129,7 @@ def createAluno():
 
     #Verifica se o NOME está vazio
     if "nome" not in dados or dados["nome"] == "":
-        return jsonify({"erro": "Preencha o nome novamente"}),400
+        return jsonify({"erro": "Preencha o nome"}),400
     
     #verifica se o DATA_DE_NASCIMENTO esta vazio
     if "data_de_nascimento" not in dados:
@@ -160,18 +160,18 @@ def createAluno():
             turma_encontrado = True  # Marca como encontrado
             break  # Sai do loop assim que o professor for encontrado
 
-    # Se o professor não for encontrado, retorna um erro
+    # Se turma não for encontrado, retorna um erro
     if not turma_encontrado:
         return jsonify({"error ": "Turma inexistente"}), 400
     
     
     # Valida a Nota do primeiro semestre de 1 a 10 porém não é obrigatorio que tenha  
     nota_primeiro_semestre = None
-    if "nota_primeiro_semestre" in dados and dados["nota_primeiro_semestre"] != "":
+    if "nota_primeiro_semestre" in dados and dados["nota_primeiro_semestre"] != "" :
         try:
             nota_primeiro_semestre = float(dados["nota_primeiro_semestre"])
-            if nota_primeiro_semestre < 0 or nota_primeiro_semestre > 10:
-                return jsonify({"erro": "Nota do primeiro semestre deve estar entre 0 e 10"}), 400
+            if nota_primeiro_semestre < 0 or nota_primeiro_semestre > 10 or not isinstance (dados["nota_primeiro_semestre"], (float,int)):
+                return jsonify({"erro": "Nota do primeiro semestre deve ser um numero entre 0 e 10"}), 400
         except ValueError:
             return jsonify({"erro": "Nota do primeiro semestre deve ser um número"}), 400
     
@@ -180,8 +180,8 @@ def createAluno():
     if "nota_segundo_semestre" in dados and dados["nota_segundo_semestre"] != "":
         try:
             nota_segundo_semestre = float(dados["nota_segundo_semestre"])
-            if nota_segundo_semestre < 0 or nota_segundo_semestre > 10:
-                return jsonify({"erro": "Nota do segundo semestre deve estar entre 0 e 10"}), 400
+            if nota_segundo_semestre < 0 or nota_segundo_semestre > 10 or not isinstance (dados["nota_segundo_semestre"], (float,int)):
+                return jsonify({"erro": "Nota do segundo semestre deve ser um numero entre 0 e 10"}), 400
         except ValueError:
             return jsonify({"erro": "Nota do segundo semestre deve ser um número"}), 400
     
@@ -204,6 +204,7 @@ def createAluno():
 @app.route("/alunos/<int:idAluno>", methods=['PUT'])
 def updateAlunos(idAluno):
     alunos = dici["alunos"]
+    turmas = dici["turma"]
     
     # Verifica se o aluno existe
     aluno_encontrado = next((aluno for aluno in alunos if aluno["id"] == idAluno), None) 
@@ -235,25 +236,35 @@ def updateAlunos(idAluno):
     if not isinstance(dados["turma_id"], int):
         return jsonify({"erro": "O campo 'turma_id' deve ser um número inteiro"}), 400
 
-# Verifica se as notas são de 0 a 10
-    def validar_nota(campo):
-        if campo in dados and dados[campo] != "":
-            try:
-                nota = float(dados[campo])
-                if nota < 0 or nota > 10:
-                    return None, f"{campo} deve estar entre 0 e 10"
-                return nota, None
-            except ValueError:
-                return None, f"{campo} deve ser um número"
-        return None, None
+    turma_encontrado = False  # Variável para controlar se o professor foi encontrado
 
-    nota_primeiro_semestre, erro = validar_nota("nota_primeiro_semestre")
-    if erro:
-        return jsonify({"erro": erro}), 400
+    for turma in turmas:
+        if turma['id'] == dados["turma_id"]:
+            turma_encontrado = True  # Marca como encontrado
+            break  # Sai do loop assim que o professor for encontrado
 
-    nota_segundo_semestre, erro = validar_nota("nota_segundo_semestre")
-    if erro:
-        return jsonify({"erro": erro}), 400
+    # Se turma não for encontrado, retorna um erro
+    if not turma_encontrado:
+        return jsonify({"error ": "Turma inexistente"}), 400
+
+    # Verifica se as notas são de 0 a 10
+    nota_primeiro_semestre = None
+    if "nota_primeiro_semestre" in dados and dados["nota_primeiro_semestre"] != "" :
+        try:
+            nota_primeiro_semestre = float(dados["nota_primeiro_semestre"])
+            if nota_primeiro_semestre < 0 or nota_primeiro_semestre > 10 or not isinstance (dados["nota_primeiro_semestre"], (float,int)):
+                return jsonify({"erro": "Nota do primeiro semestre deve ser um numero entre 0 e 10"}), 400
+        except ValueError:
+            return jsonify({"erro": "Nota do primeiro semestre deve ser um número"}), 400
+
+    nota_segundo_semestre = None
+    if "nota_segundo_semestre" in dados and dados["nota_segundo_semestre"] != "":
+        try:
+            nota_segundo_semestre = float(dados["nota_segundo_semestre"])
+            if nota_segundo_semestre < 0 or nota_segundo_semestre > 10 or not isinstance (dados["nota_segundo_semestre"], (float,int)):
+                return jsonify({"erro": "Nota do segundo semestre deve ser um numero entre 0 e 10"}), 400
+        except ValueError:
+            return jsonify({"erro": "Nota do segundo semestre deve ser um número"}), 400
 
     # Calcula a média final se ambas as notas forem fornecidas
     if nota_primeiro_semestre is not None and nota_segundo_semestre is not None:
@@ -335,7 +346,7 @@ def createProfessor():
         return jsonify({"erro": "O campo 'idade' deve ser um número inteiro positivo"}), 400
 
     #Valida se a matéria tem menos de 100 caracteres
-    if "materia" not in dados or len(dados["materia"]) > 100 or not isinstance(dados["observacoes"], str):
+    if "materia" not in dados or not isinstance(dados["materia"], str) or len(dados["materia"]) > 100 :
         return jsonify({"erro": "O campo 'materia' tem que ser string e no máximo 100 caracteres "}), 400
 
     #Verifica se observacoes é do tipo string
@@ -356,26 +367,26 @@ def updateProfessor(idProfessor):
 
     dados = request.json
 
-    if "nome" in dados and dados["nome"].strip() != "":
-        professor["nome"] = dados["nome"]
-
+    if "nome" in dados and not isinstance(dados["nome"], str)  or  dados["nome"].strip() == "" :
+        return jsonify({"erro ": "Digite o nome corretamente"})
     if "idade" in dados:
         if not isinstance(dados["idade"], int) or dados["idade"] < 0:
             return jsonify({"erro": "O campo 'idade' deve ser um número inteiro positivo"}), 400
-        professor["idade"] = dados["idade"]
 
     if "materia" in dados:
         if not isinstance(dados["materia"], str):
             return jsonify({"erro": "O campo 'materia' deve ser uma string"}), 400
         if len(dados["materia"]) > 100:
             return jsonify({"erro": "O campo 'materia' deve ter no máximo 100 caracteres"}), 400
-        professor["materia"] = dados["materia"]
 
     if "observacoes" in dados:
         if not isinstance(dados["observacoes"], str):
             return jsonify({"erro": "O campo 'observacoes' deve ser uma string"}), 400
-        professor["observacoes"] = dados["observacoes"]
 
+    professor["nome"] = dados["nome"]
+    professor["idade"] = dados["idade"]
+    professor["materia"] = dados["materia"]
+    professor["observacoes"] = dados["observacoes"]
     return jsonify(professor)
 
 # Rota para deletar um professor
@@ -450,7 +461,7 @@ def createTurma():
 
     #verifica se ativo é true ou false
     if not isinstance(dados.get('ativo'), bool):
-        return jsonify ({"erro ": "Ativo deve ser uma True ou False"}), 400
+        return jsonify ({"erro ": "Ativo deve ser True ou False"}), 400
     
     dici['turma'].append(dados)
     return jsonify(dados)
