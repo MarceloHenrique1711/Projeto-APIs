@@ -3,6 +3,7 @@ from .turmas_model import *
 
 
 turma_blueprint = Blueprint('turmas', __name__,url_prefix='/turmas')
+reseta_blueprint = Blueprint('reseta', __name__,url_prefix='/reseta')
 
 
 @turma_blueprint.route("/", methods=['GET'])
@@ -25,6 +26,6 @@ def atualizar_turma(idTurma):
 def deletar_turma(idTurma):
     return deleteTurmas(idTurma)
 
-@turma_blueprint.route('/reseta', methods=['DELETE'])
+@reseta_blueprint.route('/', methods=["POST",'DELETE'])
 def resetar_dados():
-    return resetaAlunosProfessroes()
+    return resetaAlunosProfessores()

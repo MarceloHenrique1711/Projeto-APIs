@@ -71,12 +71,16 @@ def createAluno():
     except ValueError:
         return jsonify({"erro": 'Data de nascimento deve conter apenas números, por exemplo "10_10_2024"'}),400
     
-    turma_encontrado = False  # Variável para controlar se o professor foi encontrado
+    # Antes de qualquer verificação com o campo 'turma_id', verifique sua existência
+    if "turma_id" not in dados or str(dados["turma_id"]).strip() == "":
+        return jsonify({"erro": "O campo 'turma_id' é obrigatório."}), 400
+    
+    turma_encontrado = False  # Variável para controlar se o turma foi encontrado
 
     for turma in turmas:
         if turma['id'] == dados["turma_id"]:
             turma_encontrado = True  # Marca como encontrado
-            break  # Sai do loop assim que o professor for encontrado
+            break  # Sai do loop assim que o turma for encontrado
 
     # Se turma não for encontrado, retorna um erro
     if not turma_encontrado:

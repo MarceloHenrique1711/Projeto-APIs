@@ -108,9 +108,6 @@ def updateTurmas(idTurma):
             if not professor_encontrado:  
                 return jsonify({"error": "Professor inexistente"}), 400
            
-            
-
-
             #verifica se ativo é true ou false
             if not isinstance(dados.get('ativo'), bool):
                 return jsonify ({"erro ": "Ativo deve ser uma True ou False"}), 400
@@ -133,14 +130,13 @@ def deleteTurmas(idTurma):
         
     return jsonify({"erro ": "Essa Turma não existe"}), 404
 
-def resetaAlunosProfessroes():
-    professores = []
-    dici["professor"] = professores
-    alunos = []
-    dici["alunos"] = alunos
-    for professor in professores:
-        dici["professor"].remove(professor)
-    for aluno in alunos:
-        dici["aluno"].remove(aluno)
-    return jsonify(alunos, professores), 200
-
+def resetaAlunosProfessores():
+    try:
+        dici["professor"] = []
+        dici["alunos"] = []
+        return jsonify({
+            "alunos": dici["alunos"],
+            "professores": dici["professor"]
+        }), 200
+    except Exception as e:
+        return jsonify({"erro": f"Erro ao tentar resetar os dados: {str(e)}"}), 404

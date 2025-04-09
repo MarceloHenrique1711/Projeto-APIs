@@ -10,6 +10,8 @@
 
 #404	Not Found	Recurso não encontrado.
 
+#python -m testes.teste
+
 import requests
 import unittest
 from app import app
@@ -22,7 +24,7 @@ class TestStringMethods(unittest.TestCase):
         if resultado.status_code == 404:
             self.fail("Voce não definiu a rota ou digitou a rota errado")
 
-        self.assertEqual(r.status_code, 200, "A rota aluno foi nao esta respondendo como deveria") #assertEqual verifica se dois valores são iguais. No nosso caso se a API esta retornando 200 valor correto, Se não forem, ele quebra o teste e mostra a mensagem de erro.
+        self.assertEqual(resultado.status_code, 200, "A rota aluno foi nao esta respondendo como deveria") #assertEqual verifica se dois valores são iguais. No nosso caso se a API esta retornando 200 valor correto, Se não forem, ele quebra o teste e mostra a mensagem de erro.
             
     
     def teste_001_adiciona_aluno_POST(self):
@@ -45,24 +47,25 @@ class TestStringMethods(unittest.TestCase):
         if not achei_Nicolas:
             self.fail('O aluno Nicolas nao foi adicionado na lista de alunos')
 
-#    def teste_002_reseta_alunos(self):
-#        r = requests.post('http://localhost:5000/alunos', json={
-#            "id": 11,
-#            "nome": "Nicolas",
-#            "data_de_nascimento": "14_10_2004",
-#            "turma_id": 1,
-#            "nota_primeiro_semestre": 10,
-#            "nota_segundo_semestre": 10,
-#            })
-#     
-#         r_lista = requests.get('http://localhost:5000/alunos') 
-#         self.assertTrue(len(r_lista.json()) > 0)           #e a condição len(Aluno criado no POST) > 0 for verdadeira, o teste passa. Se for falsa, o teste falha.
+    def teste_002_reseta_alunos(self):
+        r = requests.post('http://localhost:5000/alunos', json={
+            "id": 11,
+            "nome": "Nicolas",
+            "data_de_nascimento": "14_10_2004",
+            "turma_id": 1,
+            "nota_primeiro_semestre": 10,
+            "nota_segundo_semestre": 10,
+            })
+     
+        r_lista = requests.get('http://localhost:5000/alunos') 
+        self.assertTrue(len(r_lista.json()) > 0)           #e a condição len(Aluno criado no POST) > 0 for verdadeira, o teste passa. Se for falsa, o teste falha.
          
-#         r_reseta = requests.post('http://localhost:5000/reseta') #reseta nome da ROTA MUDAR AMANHA 
-#         self.assertEqual(r_reseta.status_code,200)
+        r_reseta = requests.post('http://localhost:5000/reseta') #reseta nome da ROTA MUDAR AMANHA 
+        self.assertEqual(r_reseta.status_code,200)
          
-#         r_lista_depois = requests.get('http://localhost:5000/alunos')
-#         self.assertEqual(len(r_lista_depois.json()),0)
+        r_lista_depois = requests.get('http://localhost:5000/alunos')
+        self.assertEqual(len(r_lista_depois.json()),0)
+ 
          
     def teste_003_delete_aluno(self): 
         reseta_lista = requests.post('http://localhost:5000/reseta')  #O Aluno continua armazenado dos outros testes por isso esta limpando tudo
@@ -148,7 +151,7 @@ class TestStringMethods(unittest.TestCase):
 
         resposta = r.json()
         self.assertIn('erro', resposta)
-        self.assertEqual(resposta['erro'], 'Aluno não encontrado')
+        self.assertEqual(resposta['erro'], 'Esse Aluno não existe')
 
 
     def teste_008_criar_com_id_ja_existente(self):
@@ -316,7 +319,6 @@ class TestStringMethods(unittest.TestCase):
         reseta_lista = requests.post('http://localhost:5000/reseta')
         self.assertEqual(reseta_lista.status_code, 200)
 
-        # Cria aluno válido
         resposta_create = requests.post('http://localhost:5000/alunos', json={  
             "id": 7,
             "nome": "Gabriel Martins",
@@ -327,7 +329,6 @@ class TestStringMethods(unittest.TestCase):
         })
         self.assertEqual(resposta_create.status_code, 201)
 
-        # Tenta atualizar com nome vazio (apenas espaços)
         resposta_update = requests.put('http://localhost:5000/alunos/7', json={  
             "id": 7,
             "nome": "",
@@ -346,7 +347,6 @@ class TestStringMethods(unittest.TestCase):
         reseta_lista = requests.post('http://localhost:5000/reseta')
         self.assertEqual(reseta_lista.status_code, 200)
         
-        # Data no formato errado (com hífens)
         resposta = requests.post('http://localhost:5000/alunos', json={
             "id": 7,
             "nome": "caio",
@@ -365,11 +365,10 @@ class TestStringMethods(unittest.TestCase):
         reseta_lista = requests.post('http://localhost:5000/reseta')
         self.assertEqual(reseta_lista.status_code, 200)
 
-        # Primeiro cria um aluno válido
         resposta_create = requests.post('http://localhost:5000/alunos', json={
             "id": 8,
             "nome": "João Pedro",
-            "data_de_nascimento": "10_10_2004",
+            "data_de_nascimento": "22_10_2004",
             "turma_id": 1,
             "nota_primeiro_semestre": 9,
             "nota_segundo_semestre": 8
@@ -398,6 +397,7 @@ class TestStringMethods(unittest.TestCase):
         resposta = requests.post('http://localhost:5000/alunos', json={
             "id": 8,
             "nome": "João Pedro",
+            "turma_id": "",
             "data_de_nascimento":  "10_10_2004",
             "nota_primeiro_semestre": 9,
             "nota_segundo_semestre": 8
@@ -406,8 +406,107 @@ class TestStringMethods(unittest.TestCase):
         self.assertEqual(resposta.status_code, 400)
         resposta_json = resposta.json()
         self.assertIn("erro", resposta_json)
-        self.assertEqual(resposta_json["erro"], "Turma é obrigatória")
+        self.assertEqual(resposta_json["erro"], "O campo 'turma_id' é obrigatório.")
 
+    def teste_020_put_sem_turma_id(self):
+        reseta_lista = requests.post('http://localhost:5000/reseta')
+        self.assertEqual(reseta_lista.status_code, 200)
+
+        resposta_create = requests.post('http://localhost:5000/alunos', json={
+            "id": 10,
+            "nome": "João Pedro",
+            "turma_id": 1,
+            "data_de_nascimento": "10_10_2004",
+            "nota_primeiro_semestre": 9,
+            "nota_segundo_semestre": 8
+        })
+        self.assertEqual(resposta_create.status_code, 201)
+
+        resposta_update = requests.put('http://localhost:5000/alunos/10', json={
+            "id": 10,
+            "nome": "João Pedro",  
+            "data_de_nascimento": "10_10_2004",
+            "nota_primeiro_semestre": 9,
+            "nota_segundo_semestre": 8
+        })
+
+        self.assertEqual(resposta_update.status_code, 400)
+        resposta_json = resposta_update.json()
+        self.assertIn("erro", resposta_json)
+        self.assertEqual(resposta_json["erro"], "O campo 'turma_id' é obrigatório.")
+
+    def teste_021_post_com_notas_fora_intervalo(self):
+        reseta_lista = requests.post('http://localhost:5000/reseta')
+        self.assertEqual(reseta_lista.status_code, 200)
+
+        # Teste 1: nota_primeiro_semestre maior que 10
+        resposta1 = requests.post('http://localhost:5000/alunos', json={
+            "id": 12,
+            "nome": "SAYMUEL",
+            "turma_id": 1,
+            "data_de_nascimento": "10_10_2004",
+            "nota_primeiro_semestre": 11,  
+            "nota_segundo_semestre": 8
+        })
+        self.assertEqual(resposta1.status_code, 400)
+        resposta_json1 = resposta1.json()
+        self.assertIn("erro", resposta_json1)
+        self.assertEqual(resposta_json1["erro"], "Nota do primeiro semestre deve ser um numero entre 0 e 10")
+
+        # Teste 2: nota_segundo_semestre negativa
+        resposta2 = requests.post('http://localhost:5000/alunos', json={
+            "id": 13,
+            "nome": "SAMUEL",
+            "turma_id": 1,
+            "data_de_nascimento": "10_10_2004",
+            "nota_primeiro_semestre": 8,
+            "nota_segundo_semestre": -10
+        })
+        self.assertEqual(resposta2.status_code, 400)
+        resposta_json2 = resposta2.json()
+        self.assertIn("erro", resposta_json2)
+        self.assertEqual(resposta_json2["erro"], "Nota do segundo semestre deve ser um numero entre 0 e 10")
+
+
+    def teste_022_put_com_notas_fora_intervalo(self):
+        reseta_lista = requests.post('http://localhost:5000/reseta')
+        self.assertEqual(reseta_lista.status_code, 200)
+
+        resposta_create = requests.post('http://localhost:5000/alunos', json={
+            "id": 14,
+            "nome": "Aluno de Teste",
+            "turma_id": 1,
+            "data_de_nascimento": "10_10_2004",
+            "nota_primeiro_semestre": 8,
+            "nota_segundo_semestre": 9
+        })
+        self.assertEqual(resposta_create.status_code, 201)
+
+        resposta_put1 = requests.put('http://localhost:5000/alunos/14', json={
+            "id": 14,
+            "nome": "Aluno de Teste",
+            "turma_id": 1,
+            "data_de_nascimento": "10_10_2004",
+            "nota_primeiro_semestre": 11,
+            "nota_segundo_semestre": 8
+        })
+        self.assertEqual(resposta_put1.status_code, 400)
+        resposta_json1 = resposta_put1.json()
+        self.assertIn("erro", resposta_json1)
+        self.assertEqual(resposta_json1["erro"], "Nota do primeiro semestre deve ser um numero entre 0 e 10")
+
+        resposta_put2 = requests.put('http://localhost:5000/alunos/14', json={
+            "id": 14,
+            "nome": "Aluno de Teste",
+            "turma_id": 1,
+            "data_de_nascimento": "10_10_2004",
+            "nota_primeiro_semestre": 8,
+            "nota_segundo_semestre": -5
+        })
+        self.assertEqual(resposta_put2.status_code, 400)
+        resposta_json2 = resposta_put2.json()
+        self.assertIn("erro", resposta_json2)
+        self.assertEqual(resposta_json2["erro"], "Nota do segundo semestre deve ser um numero entre 0 e 10")
 
 
 def runTests():
