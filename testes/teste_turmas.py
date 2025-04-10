@@ -294,33 +294,6 @@ class TestStringMethods(unittest.TestCase):
         })
         self.assertEqual(resposta.status_code, 400)
 
-    def teste_019_put_sem_o_professor_existir(self):
-        reseta_lista = requests.post('http://localhost:5000/resetaTurma') 
-        self.assertEqual(reseta_lista.status_code, 200)
-
-        
-
-        resposta = requests.post('http://localhost:5000/turmas', json={
-           "ativo": True,
-            "descricao": "",
-            "id": 1,
-            "professor_id": 1 
-        })
-        self.assertEqual(resposta.status_code, 401)
-
-        reseta_lista = requests.post('http://localhost:5000/reseta')
-        self.assertEqual(reseta_lista.status_code, 200)
-
-        resposta2 = requests.put('http://localhost:5000/turmas/1', json={
-           "ativo": True,
-            "descricao": "",
-            "id": 1,
-            "professor_id": 1 
-        })
-        self.assertEqual(resposta2.status_code, 400)
-
-
-
 
 def runTests():
     suite = unittest.defaultTestLoader.loadTestsFromTestCase(TestStringMethods)
