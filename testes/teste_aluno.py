@@ -14,7 +14,7 @@
 
 import requests
 import unittest
-from app import app
+
 
 class TestStringMethods(unittest.TestCase):
     

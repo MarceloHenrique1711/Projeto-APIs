@@ -61,27 +61,34 @@ def updateProfessor(idProfessor):
 
     dados = request.json
 
-    if "nome" in dados and not isinstance(dados["nome"], str)  or  dados["nome"].strip() == "" :
-        return jsonify({"erro ": "Digite o nome corretamente"})
-    if "idade" in dados:
-        if not isinstance(dados["idade"], int) or dados["idade"] < 0:
-            return jsonify({"erro": "O campo 'idade' deve ser um número inteiro positivo"}), 400
+    # Validação do campo 'nome'
+    if "nome" not in dados or not isinstance(dados["nome"], str) or dados["nome"].strip() == "":
+        return jsonify({"erro": "O campo 'nome' é obrigatório e deve ser uma string válida"}), 400
 
+    # Outras validações continuam aqui...
+
+    # Validação do campo 'idade'
+    if "idade" not in dados or not isinstance(dados["idade"], int) or dados["idade"] < 0:
+        return jsonify({"erro": "O campo 'idade' é obrigatório"}), 400
+
+    # Validação do campo 'materia'
     if "materia" in dados:
         if not isinstance(dados["materia"], str):
             return jsonify({"erro": "O campo 'materia' deve ser uma string"}), 400
         if len(dados["materia"]) > 100:
             return jsonify({"erro": "O campo 'materia' deve ter no máximo 100 caracteres"}), 400
 
+    # Validação do campo 'observacoes'
     if "observacoes" in dados:
         if not isinstance(dados["observacoes"], str):
             return jsonify({"erro": "O campo 'observacoes' deve ser uma string"}), 400
 
+    # Atualização dos dados do professor
     professor["nome"] = dados["nome"]
     professor["idade"] = dados["idade"]
     professor["materia"] = dados["materia"]
     professor["observacoes"] = dados["observacoes"]
-    return jsonify(professor), 201
+    return jsonify(professor), 200
 
 # deletar um professor
 def deleteProfessor(idProfessor):
@@ -90,8 +97,7 @@ def deleteProfessor(idProfessor):
         if professor['id'] == idProfessor:
             dados = professor
             dici['professor'].remove(dados)
-            dados=dici['professor'] 
-            return jsonify(dados)
+            return jsonify(dici["professor"])
 
-    return jsonify({"erro ": "Esse professor não existe"}), 404
+    return jsonify({"erro": "Esse professor não existe"}), 404
 
