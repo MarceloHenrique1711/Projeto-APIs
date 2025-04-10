@@ -12,7 +12,7 @@
 
 #python -m testes.teste
 
-import requests
+import requests #pip install requests
 import unittest
 
 
@@ -508,6 +508,22 @@ class TestStringMethods(unittest.TestCase):
         self.assertIn("erro", resposta_json2)
         self.assertEqual(resposta_json2["erro"], "Nota do segundo semestre deve ser um numero entre 0 e 10")
 
+    def teste_023_post_sem_a_turma_existir(self):
+            reseta_lista = requests.post('http://localhost:5000/resetaTurma') 
+            self.assertEqual(reseta_lista.status_code, 200)
+
+            reseta_lista = requests.post('http://localhost:5000/reseta')
+            self.assertEqual(reseta_lista.status_code, 200)
+
+            r = requests.post('http://localhost:5000/alunos',json= {
+                "id": 10,
+                "nome": "Nicolas",
+                "data_de_nascimento": "14_10_2004",
+                "turma_id": 1,
+                "nota_primeiro_semestre": 10,
+                "nota_segundo_semestre": 10,
+    })
+            self.assertEqual(r.status_code, 400)
 
 def runTests():
     suite = unittest.defaultTestLoader.loadTestsFromTestCase(TestStringMethods)

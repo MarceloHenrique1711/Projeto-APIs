@@ -1,12 +1,13 @@
 #python -m venv *nome do ambiente*
 #./*nome do ambiente*/Scripts/Activate
 #pip install flask
+#pip install requests
 
 import os
 from config import app
 from alunos.alunos_route import alunos_blueprint
 from professores.professores_route import professor_blueprint
-from turmas.turmas_route import turma_blueprint, reseta_blueprint
+from turmas.turmas_route import turma_blueprint, reseta_blueprint, resetaTurma_blueprint
 
 
 
@@ -15,6 +16,7 @@ app.register_blueprint(alunos_blueprint)
 app.register_blueprint(professor_blueprint)
 app.register_blueprint(turma_blueprint)
 app.register_blueprint(reseta_blueprint)
+app.register_blueprint(resetaTurma_blueprint)
 
 
 

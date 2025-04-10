@@ -5,7 +5,9 @@
 # 204  No Content Requisição bem-sucedida, mas sem conteúdo para retornar.
 # 404  Not Found Recurso não encontrado.
 
-import requests
+#python -m testes.teste
+
+import requests #pip install requests
 import unittest
 
 

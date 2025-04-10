@@ -1,6 +1,6 @@
 import datetime
 from datetime import datetime
-from flask import jsonify, request
+from flask import jsonify, request #pip install flask
 from dicionario import *
 
 def calcular_idade(data_nascimento):

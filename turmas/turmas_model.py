@@ -1,4 +1,4 @@
-from flask import jsonify, request
+from flask import jsonify, request #pip install flask
 from dicionario import *
 
 
@@ -17,7 +17,7 @@ def getTurmasId(idTurma):
             dados = turma
             return jsonify(dados)  
 
-    return jsonify({"erro ": "Não existe essa turma"}), 404
+    return jsonify({"erro": "Não existe essa turma"}), 404
 
 def createTurma():
     dados = request.json
@@ -27,23 +27,23 @@ def createTurma():
     #verifica se o id ja é usado em outra turma
     for turma in turmas:
         if turma['id'] == dados['id']:
-            return jsonify({"erro ": "ID da turma repetido"}), 400
+            return jsonify({"erro": "ID da turma repetido"}), 400
 
     #verifica se o id é inteiro
     if not isinstance(dados.get('id'), int):
-        return jsonify({"error ": "ID deve ser um inteiro"}), 400
+        return jsonify({"erro": "ID deve ser um inteiro"}), 400
     
     #verifica se o id é positivo
     if dados.get("id") < 1:
-        return jsonify({"error ": "ID deve ser positivo"}), 400
+        return jsonify({"erro": "ID deve ser positivo"}), 400
 
     #verifica se descricao é string
     if not isinstance(dados.get('descricao'), str):
-        return jsonify ({"erro ": "Descricao deve ser uma string"}), 400
+        return jsonify ({"erro": "Descricao deve ser uma string"}), 400
     
     #verifica se decricao tem no max 100 caractere
     if not len(dados.get('descricao')) <= 100:
-        return jsonify ({"erro: ": "Descricao deve ter no máximo 100 caracteres"}), 400
+        return jsonify ({"erro:": "Descricao deve ter no máximo 100 caracteres"}), 400
     
     professor_encontrado = False  # Variável para controlar se o professor foi encontrado
 
@@ -54,14 +54,14 @@ def createTurma():
 
     # Se o professor não for encontrado, retorna um erro
     if not professor_encontrado:
-        return jsonify({"error ": "Professor inexistente"}), 400
+        return jsonify({"erro": "Professor inexistente"}), 400
 
     #verifica se ativo é true ou false
     if not isinstance(dados.get('ativo'), bool):
-        return jsonify ({"erro ": "Ativo deve ser True ou False"}), 400
+        return jsonify ({"erro": "Ativo deve ser True ou False"}), 400
     
     dici['turma'].append(dados)
-    return jsonify(dados)
+    return jsonify(dados), 201
 
 def updateTurmas(idTurma):
     turmas = dici["turma"]
@@ -70,32 +70,21 @@ def updateTurmas(idTurma):
         if turma['id'] == idTurma:
             dados = request.json
 
-            #verifica se o id ja é usado em outra turma
-            for turma in turmas:
-                if turma['id'] == dados['id']:
-                    return jsonify({"erro ": "ID da turma repetido"}), 400
-
-            #verifica se o id é inteiro
-            if not isinstance(dados.get('id'), int):
-                return jsonify({"error ": "ID deve ser um inteiro"}), 400
             
-            #verifica se o id é positivo
-            if dados.get("id") < 1:
-                return jsonify({"error ": "ID deve ser positivo"}), 400
 
             #verifica se descricao é string
             if not isinstance(dados.get('descricao'), str):
-                return jsonify ({"erro ": "Descricao deve ser uma string"}), 400
+                return jsonify ({"erro": "Descricao deve ser uma string"}), 400
             
             #verifica se decricao tem no max 100 caractere
             if not len(dados.get('descricao')) <= 100:
-                return jsonify ({"erro : ": "Descricao deve ter no máximo 100 caracteres"}), 400
+                return jsonify ({"erro:": "Descricao deve ter no máximo 100 caracteres"}), 400
 
 
 
             # Verifica se o professor existe para ser atribuído à turma
             if not isinstance(dados.get('professor_id'), int) or dados.get('professor_id') < 1:
-                return jsonify({"error": "Professor ID deve ser um número inteiro positivo"}), 400
+                return jsonify({"erro": "Professor ID deve ser um número inteiro positivo"}), 400
 
             # Verifica se o professor existe
             professor_encontrado = False
@@ -106,18 +95,17 @@ def updateTurmas(idTurma):
                     break
                 
             if not professor_encontrado:  
-                return jsonify({"error": "Professor inexistente"}), 400
+                return jsonify({"erro": "Professor inexistente"}), 400
            
             #verifica se ativo é true ou false
             if not isinstance(dados.get('ativo'), bool):
-                return jsonify ({"erro ": "Ativo deve ser uma True ou False"}), 400
+                return jsonify ({"erro": "Ativo deve ser uma True ou False"}), 400
             
-            turma["id"] = dados['id']
             turma['descricao'] = dados['descricao']
             turma['professor_id'] = dados['professor_id']
             turma['ativo'] = dados['ativo']
             return jsonify(dados), 200
-    return jsonify({"erro ": "Turma não encontrada"}), 404
+    return jsonify({"erro": "Turma não encontrada"}), 404
    
 def deleteTurmas(idTurma):
     turmas = dici["turma"]
@@ -128,7 +116,7 @@ def deleteTurmas(idTurma):
             dados=dici['turma'] 
             return jsonify(dados), 200
         
-    return jsonify({"erro ": "Essa Turma não existe"}), 404
+    return jsonify({"erro": "Essa Turma não existe"}), 404
 
 def resetaAlunosProfessores():
     try:
@@ -137,6 +125,16 @@ def resetaAlunosProfessores():
         return jsonify({
             "alunos": dici["alunos"],
             "professores": dici["professor"]
+        }), 200
+    except Exception as e:
+        return jsonify({"erro": f"Erro ao tentar resetar os dados: {str(e)}"}), 404
+
+#metodo só para os testes de turma 
+def resetaTurmas():
+    try:
+        dici["turma"] = []
+        return jsonify({
+            "turmas": dici["turma"],
         }), 200
     except Exception as e:
         return jsonify({"erro": f"Erro ao tentar resetar os dados: {str(e)}"}), 404

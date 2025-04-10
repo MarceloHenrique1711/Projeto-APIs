@@ -1,4 +1,4 @@
-from flask import jsonify, request
+from flask import jsonify, request #pip install flask
 from dicionario import *
 
 
