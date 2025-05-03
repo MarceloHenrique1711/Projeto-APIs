@@ -8,7 +8,7 @@ from config import app
 from alunos.alunos_route import alunos_blueprint
 from professores.professores_route import professor_blueprint
 from turmas.turmas_route import turma_blueprint, reseta_blueprint, resetaTurma_blueprint
-
+from config import app,db
 
 
 
@@ -20,7 +20,8 @@ app.register_blueprint(resetaTurma_blueprint)
 
 
 
-
+with app.app_context():
+    db.create_all()
 
 if __name__ == '__main__':
   app.run(

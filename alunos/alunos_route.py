@@ -1,5 +1,5 @@
 from flask import Blueprint
-from .alunos_model import *
+from .alunos_controller import *
 
 
 alunos_blueprint = Blueprint('alunos', __name__,url_prefix='/alunos')

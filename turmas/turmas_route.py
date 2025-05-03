@@ -1,6 +1,6 @@
-from flask import Blueprint
-from .turmas_model import *
-
+from flask import Blueprint, request, jsonify,render_template,redirect, url_for
+from .turmas_controller import *
+from config import db
 
 turma_blueprint = Blueprint('turmas', __name__,url_prefix='/turmas')
 reseta_blueprint = Blueprint('reseta', __name__,url_prefix='/reseta')
