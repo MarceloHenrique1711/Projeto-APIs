@@ -17,6 +17,13 @@ import unittest
 
 
 class TestStringMethods(unittest.TestCase):
+    professor = requests.post('http://localhost:5000/professores',json= {
+
+            "nome":"felipe",
+            "idade": 22,
+            "materia": "TESTE",
+            "observacoes": "sos"
+  })
     
     def teste_000_verifica_se_a_rota_turma_existe(self):
         r=requests.get('http://localhost:5000/turmas')
@@ -129,59 +136,7 @@ class TestStringMethods(unittest.TestCase):
         r = requests.delete('http://localhost:5000/turmas/1')
         self.assertEqual(r.status_code, 404)
 
-    def teste_008_criar_com_id_ja_existente(self):
-        reseta_lista = requests.post('http://localhost:5000/resetaTurma') 
-        self.assertEqual(reseta_lista.status_code, 200)
-        
-        r = requests.post('http://localhost:5000/turmas', json={  
-            "ativo": True,
-            "descricao": "",
-            "id": 1,
-            "professor_id": 1  
-            })  
-        
-        r = requests.post('http://localhost:5000/turmas', json={  
-            "ativo": True,
-            "descricao": "",
-            "id": 1,
-            "professor_id": 1   
-            })  
-        self.assertEqual(r.status_code,400)
 
-    def teste_009_post_sem_id(self):
-        reseta_lista = requests.post('http://localhost:5000/resetaTurma') 
-        self.assertEqual(reseta_lista.status_code, 200)
-
-        resposta = requests.post('http://localhost:5000/turmas', json={  
-            "ativo": True,
-            "descricao": "",
-            "professor_id": 1 
-            })
-        self.assertEqual(resposta.status_code,400)
-
-    def teste_010_post_com_id_negativo(self):
-        reseta_lista = requests.post('http://localhost:5000/resetaTurma') 
-        self.assertEqual(reseta_lista.status_code, 200)
-        
-        resultado = requests.post('http://localhost:5000/turmas', json={  
-            "ativo": True,
-            "descricao": "",
-            "id": -1,
-            "professor_id": 1  
-        })
-        self.assertEqual(resultado.status_code, 400)
-
-    def teste_011_post_com_id_nao_inteiro(self):
-        reseta_lista = requests.post('http://localhost:5000/resetaTurma') 
-        self.assertEqual(reseta_lista.status_code, 200)
-        
-        resultado = requests.post('http://localhost:5000/turmas', json={  
-            "ativo": True,
-            "descricao": "",
-            "id": 1.5,
-            "professor_id": 1 
-        })
-        self.assertEqual(resultado.status_code, 400)
 
     def teste_012_post_com_ativo_vazio(self):
         reseta_lista = requests.post('http://localhost:5000/resetaTurma') 

@@ -1,0 +1,19 @@
+#rodar docker
+#docker-compose up --build
+#docker-compose exec web python -m unittest discover -s testes
+
+
+#parar e apagar os containers
+#docker-compose down -v
+
+version: '3.8'
+
+services:
+  web:
+    build: .
+    ports:
+      - "5000:5000"
+    volumes:
+      - .:/app
+    environment:
+      - FLASK_ENV=development
