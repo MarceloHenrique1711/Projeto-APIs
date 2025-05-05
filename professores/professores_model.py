@@ -11,7 +11,7 @@ class Professor(db.Model):
     nome = db.Column(db.String(50), nullable=False)
     idade = db.Column(db.Integer, nullable=False)
     materia = db.Column(db.String(100), nullable=False)
-    observacoes = db.Column(db.String(100))
+    observacoes = db.Column(db.String(100), nullable=False)
 
     def __init__(self, nome, idade, materia, observacoes):
         self.nome = nome

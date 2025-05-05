@@ -20,9 +20,8 @@ class Turma(db.Model):
 
     def to_dict(self):
         return {
-            'id': self.id,
+            'turma_id': self.id,
             'descricao': self.descricao,
+            'ativo': self.ativo,
             'professor_id': self.professor_id,
-            'professor_nome': self.professor.nome if self.professor else None,  # Incluindo nome do professor no dicionário
-            'ativo': self.ativo
         }
