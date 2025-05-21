@@ -1,5 +1,5 @@
 from flask_restx import Namespace, Resource, fields
-from turmas.turmas_controller import getTurma, getTurmasId, createTurma, updateTurmas, deleteTurmas, resetaAlunosProfessores
+from turmas.turmas_repository import getTurma, getTurmasId, createTurma, updateTurmas, deleteTurmas, resetaAlunosProfessores
 
 turmas_ns = Namespace("turma", description="Operações relacionadas às turmas")
 

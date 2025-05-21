@@ -1,5 +1,5 @@
 from flask_restx import Namespace, Resource, fields
-from professores.professores_controller import getProfessores, getProfessorId, createProfessor, updateProfessor, deleteProfessor
+from professores.professores_repository import getProfessores, getProfessorId, createProfessor, updateProfessor, deleteProfessor
 
 professores_ns = Namespace("Professor", description="Operações relacionadas aos professores")
 

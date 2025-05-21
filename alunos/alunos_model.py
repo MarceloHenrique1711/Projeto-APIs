@@ -1,5 +1,4 @@
 from datetime import datetime
-from flask import jsonify, request
 from config import db
 
 class Aluno(db.Model):

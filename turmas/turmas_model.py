@@ -1,5 +1,3 @@
-from flask import jsonify, request #pip install flask
-from dicionario import *
 from config import db
 
 class Turma(db.Model):

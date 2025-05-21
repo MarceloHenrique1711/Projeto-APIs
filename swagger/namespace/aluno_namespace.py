@@ -1,5 +1,5 @@
 from flask_restx import Namespace, Resource, fields
-from alunos.alunos_controller import getAluno, getAlunosId, createAluno, updateAlunos, deleteAlunos
+from alunos.alunos_repository import getAluno, getAlunosId, createAluno, updateAlunos, deleteAlunos
 
 
 

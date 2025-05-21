@@ -1,5 +1,5 @@
 from flask import Blueprint
-from .professores_controller import *
+from .professores_repository import *
 
 
 professor_blueprint = Blueprint('professores', __name__, url_prefix='/professores')
