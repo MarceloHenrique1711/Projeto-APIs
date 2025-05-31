@@ -23,7 +23,7 @@ def getAlunosId(idAluno):
     aluno = Aluno.query.get(idAluno)
     if not aluno:
         return jsonify({'erro': 'Aluno não encontrada'}), 404  
-    return jsonify(aluno.to_dict())
+    return jsonify(aluno.to_dict()), 200
 
 # === criar aluno === #
 def createAluno():

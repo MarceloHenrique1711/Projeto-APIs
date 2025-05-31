@@ -14,7 +14,7 @@ def getTurmasId(idTurma):
     turma = Turma.query.get(idTurma)
     if not turma:
         return jsonify({'erro': 'Turma não encontrada'}), 404  
-    return jsonify(turma.to_dict())
+    return jsonify(turma.to_dict()), 200
 
 def validar_dados_turma(dados, update=False):
     # Verifica se descricao é string
