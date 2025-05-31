@@ -1,4 +1,5 @@
 from flask import request, jsonify
+import requests
 from .turmas_model import Turma
 from config import db
 from professores.professores_model import Professor
@@ -54,11 +55,21 @@ def createTurma():
         return jsonify({"erro": "Professor não encontrado"}), 400
     
     try:
+        # Requisição à API A para obter sala disponível
+        resposta = requests.get("http://api_sala:6000/salas/disponivel")
+        
+        if resposta.status_code == 404:
+            return jsonify({"erro": "Nenhuma sala disponível no momento"}), 400
+
+        sala = resposta.json()
+        sala_id = sala['sala_id']
+
         # Cria a nova turma
         nova_turma = Turma(
             descricao=dados['descricao'],
             professor_id=dados['professor_id'],
-            ativo=dados['ativo']
+            ativo=dados['ativo'],
+            sala_id=sala_id
         )
         db.session.add(nova_turma)
         db.session.commit()
@@ -124,3 +135,11 @@ def resetaTurmas():
         return jsonify({'mensagem': 'Todas as turmas foram apagados com sucesso!'}), 200
     except Exception as e:
         return jsonify({"erro": f"Erro ao tentar resetar os dados: {str(e)}"}), 404
+
+
+def get_turma_por_sala(sala_id):
+    turma = Turma.query.filter_by(sala_id=sala_id).first()
+    if turma:
+        return jsonify(turma.to_dict()), 200
+    else:
+        return jsonify({}), 200  # Retorna 200 com objeto vazio se nenhuma turma usar a sala

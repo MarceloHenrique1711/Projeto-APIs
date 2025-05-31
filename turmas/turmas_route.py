@@ -10,6 +10,10 @@ resetaTurma_blueprint = Blueprint('resetaTurma', __name__,url_prefix='/resetaTur
 def listar_turmas():
     return getTurma()
 
+@turma_blueprint.route('/por_sala/<int:sala_id>', methods=['GET'])
+def listar_sala_por_id(sala_id):
+    return get_turma_por_sala(sala_id)
+
 @turma_blueprint.route('/<int:idTurma>', methods=['GET'])
 def listar_turma_por_id(idTurma):
     return getTurmasId(idTurma)

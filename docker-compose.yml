@@ -1,6 +1,6 @@
 #rodar docker
 #docker-compose up --build
-#docker-compose exec web python -m unittest discover -s testes
+#docker-compose exec api_turma python -m unittest discover -s testes
 
 
 #parar e apagar os containers
@@ -9,7 +9,7 @@
 version: '3.8'
 
 services:
-  web:
+  api_turma:
     build: .
     ports:
       - "5000:5000"
@@ -17,3 +17,10 @@ services:
       - .:/app
     environment:
       - FLASK_ENV=development
+    networks:
+      - projeto-apis
+
+
+networks:
+  projeto-apis:
+    external: true
